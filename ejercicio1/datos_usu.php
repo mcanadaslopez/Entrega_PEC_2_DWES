@@ -1,0 +1,66 @@
+<?php
+/*comprueba que el usuario haya abierto sesión o redirige*/
+require 'sesiones.php';
+require_once 'bd.php';
+require_once 'bd_pec2_1.php';
+comprobar_sesion();
+comprobar_admin();
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Listado de usuarios</title>
+</head>
+
+<body>
+	<?php
+	require 'cabecera.php';
+
+if ($_SERVER["REQUEST_METHOD"]=="POST"){
+$actualizado = actualizar_restaurante($_POST);
+if ($actualizado){
+	echo "<p> Datos actualizados correctamente </p>";
+} else{
+	echo "<p> Error en la actualización </p>";
+}
+}
+
+	$restaurantes = cargar_restaurantes();
+	if ($restaurantes === FALSE) {
+		echo "<p class='error'>Error al conectar con la base datos</p>";
+		exit;
+	}
+
+	echo "<table>"; //abrir la tabla
+	echo "<tr><th>Correo</th><th>Clave</th><th>País</th><th>CP</th><th>Ciudad</th><th>Dirección</th><th>Rol</th></tr>";
+	foreach ($restaurantes as $restaurante) {
+		$correo = $restaurante['Correo'];
+		$clave = $restaurante['Clave'];
+		$pais = $restaurante['Pais'];
+		$cp = $restaurante['CP'];
+		$ciudad = $restaurante['Ciudad'];
+		$direccion = $restaurante['Direccion'];
+		$rol = $restaurante['Rol'];
+		$codres = $restaurante['CodRes'];
+		echo "<tr>
+            <form action = 'datos_usu.php' method = 'POST'>
+            <td><input name = ':correo' value = '$correo'></td>
+            <td><input name = ':clave' value = '$clave'></td>
+            <td><input name = ':pais' value = '$pais'></td>
+            <td><input name = ':cp' value = '$cp'></td>
+            <td><input name = ':ciudad' value = '$ciudad'></td>
+            <td><input name = ':direccion' value = '$direccion'></td>
+            <td><input name = ':rol' value = '$rol'></td>
+            <input name = ':codres'  type='hidden'  value = '$codres'>
+            <td><input type = 'submit' value='Modificar'></td>
+			</form>
+            </tr>";
+	}
+	echo "</table>";
+	?>
+
+</body>
+
+</html>
